@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>http://www.geniousli.github.io/index.html</loc>
+    <lastmod>2016-04-13T08:11:08+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://www.geniousli.github.io/2013/10/26/welcome-to-ghost/index.html</loc>
+    <lastmod>2016-04-12T08:37:18+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://www.geniousli.github.io/author/geniousli/index.html</loc>
+    <lastmod>2016-04-13T08:11:08+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>http://www.geniousli.github.io/tag/getting-started/index.html</loc>
+    <lastmod>2016-04-13T08:11:08+08:00</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>
