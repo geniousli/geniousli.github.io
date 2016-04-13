@@ -4,7 +4,7 @@
 
 config[:casper] = {
   blog: {
-    url: 'http://www.example.com',
+    url: 'http://www.geniousli.github.io',
     name: 'Middleman',
     description: 'Makes developing websites simple.',
     date_format: '%d %B %Y',
@@ -12,7 +12,7 @@ config[:casper] = {
     logo: nil # Optional
   },
   author: {
-    name: 'Middleman',
+    name: 'geniousli',
     bio: nil, # Optional
     location: nil, # Optional
     website: nil, # Optional
@@ -141,8 +141,8 @@ configure :build do
   # activate :relative_assets
 
   # Ignoring Files
-  ignore 'javascripts/_*'
-  ignore 'javascripts/vendor/*'
-  ignore 'stylesheets/_*'
-  ignore 'stylesheets/vendor/*'
+  # ignore 'javascripts/_*'
+  # ignore 'javascripts/vendor/*'
+  # ignore 'stylesheets/_*'
+  # ignore 'stylesheets/vendor/*'
 end
