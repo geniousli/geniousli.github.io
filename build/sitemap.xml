@@ -2,7 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>http://www.geniousli.github.io/index.html</loc>
+<<<<<<< HEAD
     <lastmod>2016-04-13T08:20:32+08:00</lastmod>
+=======
+    <lastmod>2016-04-13T08:11:08+08:00</lastmod>
+>>>>>>> origin/master
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
@@ -14,13 +18,21 @@
   </url>
   <url>
     <loc>http://www.geniousli.github.io/author/geniousli/index.html</loc>
+<<<<<<< HEAD
     <lastmod>2016-04-13T08:20:32+08:00</lastmod>
+=======
+    <lastmod>2016-04-13T08:11:08+08:00</lastmod>
+>>>>>>> origin/master
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
     <loc>http://www.geniousli.github.io/tag/getting-started/index.html</loc>
+<<<<<<< HEAD
     <lastmod>2016-04-13T08:20:32+08:00</lastmod>
+=======
+    <lastmod>2016-04-13T08:11:08+08:00</lastmod>
+>>>>>>> origin/master
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
