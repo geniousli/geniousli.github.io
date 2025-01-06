@@ -18,7 +18,7 @@ The linux programming interface
     $ find / 2> /dev/null | wc -l &
     | sort < longlist | uniq -c
   ```
-  ![process-group](../images/process-group.png)
+  ![process-group](../assets/images/process-group.png)
 
 #### 进程组
 1. 每个进程都有一个 进程组ID， 表示该进程的所属进程组。子进程会继承 父进程的 进程组ID。

@@ -42,8 +42,8 @@ tags: linux,book
   * 超级块: 紧随引导块之后的一个独立块。其包含文件系统有关的详细参数: 1）i节点表容量。 2）文件系统中的逻辑块大小， 3）以逻辑块计，文件系统的大小。驻留于同一块磁盘上的不同文件系统，其类型、大小以及参数设定都有所不同（比如逻辑块）这也是将一块磁盘划分多个分区的原因之一。
   * i节点表:与文件系统中的每个文件、目录 一一对应。记录了文件的相关信息
   * 数据块: 用于存放数据，占据文件系统空间中的大部分空间
-![file_system](../images/file_system_partition.png)  
-![i_node_list](../images/file_system_i_node_list.png)
+![file_system](../assets/images/file_system_partition.png)  
+![i_node_list](../assets/images/file_system_i_node_list.png)
 ### i节点
 **对于文件系统中的每个文件（所有东西，包括:目录、链接、etc） 都有一个i节点与之对应。对i节点的标识为顺序数字，ls -li命令第一列为i节点号**
 * 其维护的信息主要有
@@ -56,7 +56,7 @@ tags: linux,book
   * 文件的大小（字节为单位）
   * 实际分配给时间的块数量 （不同于上面的文件大小，因为文件空洞的存在）
   * 指向文件数据块的指针(i-node-entry)
-![i_node_list](../images/file_system_i_node_data_block_pointers.png)
+![i_node_list](../assets/images/file_system_i_node_data_block_pointers.png)
 
 ### 虚拟文件系统(VFS)
 **是一种内核特征，通过为文件系统操作创建抽象层来解决、屏蔽，各种不同文件系统的不同的实现细节**
@@ -64,7 +64,7 @@ tags: linux,book
   * 每种文件系统都会提供VFS接口的实现
   * 接口的操作与涉及文件系统和目录的所有常规系统调用相对应，有: open, read, write, lseek, close, truncate, stat, mount, umount, mmap, mkdir, link, unlink, symlink, rename
   * 并不是所有的文件系统都支持所有的VFS操作，对于这种情况， 底层文件系统调用将错误代码传回VFS层面，并传递到应用层面
-  ![i_node_list](../images/file_system_vfs.png)
+  ![i_node_list](../assets/images/file_system_vfs.png)
 
 ### 挂载 mount
 * mount 命令:
@@ -170,8 +170,8 @@ time_t st_ctime;
   * 符号链接的地位不如硬链接，i节点并不体现符号链接数量。即便移除了文件，链接依然存在，成为空连接。甚至可以创建不存在文件的链接。
   * 因为符号链接的内容为字符串，所以可以跨越文件系统。一些系统调用中对符号链接进行解析，因为可能存在环路问题，所以规定了街引用的一个次数范围。_POSIX_SYMLOOP_MAX 常量规定了最大次数限制。（无论系统调用是否对符号链接进行解析，其总是对符号链接中的目录部分进行接引用，区分在于是否对文件接引用），
   * 权限为引用的文件的权限。
-![dir](../images/file_system_dir.png)
-![dir](../images/file_system_symbol_link.png)
+![dir](../assets/images/file_system_dir.png)
+![dir](../assets/images/file_system_symbol_link.png)
 
 #### 系统调用:
 * link（const char * oldpath, const char * newpath）; 创建硬链接， oldpath 不应为符号链接，否则不具有可移植性。

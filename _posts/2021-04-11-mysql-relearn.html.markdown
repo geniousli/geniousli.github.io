@@ -6,9 +6,9 @@ tags: mysql
 
 ## Mysql Relearn
 ### 内存模型：
- ![memory-cache](../images/innodb-change-buffer.png)
+ ![memory-cache](../assets/images/innodb-change-buffer.png)
 * Change BUffer： 缓存 不在Buffer pool 中的 索引页的变动， 变动 可能由 insert update， delete 等操作 导致， 将在以后 页面 被加载到 Buffer pool时 被合并
-  * [image]
+  * ![architecture](../assets/images/innodb-architecture.png)
   * 不同于 聚簇索引， 普通的索引 通常是不唯一的，索引 的插入 删除 更新 通常是 random 的， 随后 将 change Buffer 的合并到 Buffer pool（当索引页被load 到 buffer pool时） 将减少 随机 的IO 操作。
   * 当系统 空闲时，或者缓慢关闭时 会定时的进行清理操作（将cache 写回到 硬盘中） 清理操作 将 一系列的 索引更新 写入到磁盘中 的速度 远高于 每个更新立即写入
   * 当存在大量的 受影响的row 和 众多的 索引时， change Buffer 的合并（这里的合并 应该不是简单的与 Buffer pool的合并，而是 合并之后，需要写回到 硬盘中吧） 可能 需要数个小时， 在这期间， IO将显著增加， 导致 磁盘绑定查询（意思是 需要 访问硬盘？） 的速度显著变慢， 

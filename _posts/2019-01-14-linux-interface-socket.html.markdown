@@ -40,7 +40,7 @@ The linux programming interface
         * accpet调用返回的结果是 已连接的 socket文件描述符，监听 socketfd 会保持打开状态。并可以接收后续连接。
         * 典型的 服务器应用 会创建一个 监听socketfd， 将其绑定到一个约定的地址上。然后 accept 该socketfd 上 的连接 来处理所有的客户端请求。
     * connect(int sockfd, struct sockaddr * addr, scoklen_t addrlen): 系统调用将sockfd 主动连接到 地址addr 指定的监听socket上。如果连接失败，标准的可以移植的方法为: 关闭socket，创建一个新的socket，并重新连接
-      ![udp](../images/pending_socket.png)
+      ![udp](../assets/images/pending_socket.png)
 
 4. 流 socket 提供了一个在两个端点之间 一个双向通信的通道，流socket IO 上的操作与 管道 IO的操作类似
     * 可以使用 read， write，因为socket是双向的，所以两端都可以使用
@@ -56,7 +56,7 @@ The linux programming interface
       * 发送者 socket connect之后，数据报的发送可以使用write来完成，而无需使用sendto，并每次传递addr地址。
       * 接收者 socket connect之后，只能接收由对等的socket 发送的数据报
       * 数据报socket connect的明显优势在于 可以使用更简单的IO 系统调用，在一些TCP/IP实践中，将一个数据报的socket连接到一个对等socket（connect）能够带来性能上的提升
-      ![udp](../images/udp_socket.png)
+      ![udp](../assets/images/udp_socket.png)
 
 ### Socket: Unix domain
 
@@ -96,7 +96,7 @@ The linux programming interface
 1. 封装协议的特点有:  
     1. 透明: 每一个协议层都对上层 隐藏下层的操作和复杂性。 入一个使用TCP的应用程序只需要使用标准的socket API并清楚自己在使用 一项可靠的字节流传输服务，而无需理解TCP操作的细节。（严格来说 这个标准并不总是正确，应用程序偶尔也需要弄清楚 底层传输协议的操作细节）
     2. 封装: 是分层连网协议中的一个重要的原则。关键概念: 底层会将从高层向底层传递的信息 当成不透明的数据进行处理。并不会尝试对高哦曾发送过来的信息进行解释。只会 将这些信息 添加自身这一层所使用的头信息，并传递到下一层。当数据从底层传递到高层时，会进行一个逆向的解包过程。
-    ![tcp_ip_protocol](../images/tcp_ip_protocol.png)
+    ![tcp_ip_protocol](../assets/images/tcp_ip_protocol.png)
 2. 数据链路层: 传输数据， 数据链路层需要将上层传递过来的数据报封装进 被称为帧的一个一个单元，其中每帧都会包含一个头，包含了目标地址和帧的大小。数据链路层在物理连接上 传输帧并处理来自接收者的确认。这一层可能进行 错误检测、重传、以及流量控制。一些数据链层还会将大的网络报分割成多个帧并在接收者端对这些帧进行重传。应用程序编程的角度通常可以忽略 数据链路层，因为所有的通讯细节都是由 驱动和硬件来处理的。有关IP的讨论中， 数据链路层中比较重要的一个特点是最大传输单元(MTU)MTU是该层 所能传输的帧大小的上限， 不同的数据链路层MTU是不同的(netstat -i )
 3. 网络层IP
   网络层的、关注的为 如何将包 从愿主几发送到目标主机， 这一层执行的任务如下:
@@ -115,7 +115,7 @@ The linux programming interface
       * 确认、重传、超时: 一个TCP段无错的到达接收方，接收方会向发送者发送确认请求，如果报发生错误，接收方丢弃即可。发送方 在发送每一个分段时会启用一个定时器，在定时器超时时没有收到确认。那么就重传这个分段 （由于所使用的网络以及当前的流量负载会影响 传输一个分段和接收其确认 所需要的时间，所以 TCP采用了 一个算法来动态的调整 重传超时时间（RTO） 的大小。接收者可能不会立即发送确认，而是等待几毫秒 来观察是否可以将 确认塞进接收者返回给发送者的响应中（因为相应是接收者发送给接收者的，并不需要传递确认信息）来减少一个TCP段的发送，从而降低网络中的包的数量。这个称为 延迟ACK 技术）
       * 排序: TCP连接中的每个分段都会分配到一个逻辑号。这个数字指出了该分段在 该连接 的数据流中的位置（连接中的两个流都有各自的序号计数系统）序号的作用有: 1）这个序号可以保证TCP分段能够以正确的顺序在接收者进行组装， 然后以字节流的形式传送给应用层 2）接收者 发送给发送者 使用序号来标识出收到了那个TCP分段 3）接收者可以去除重复的分段信息。(一个流的初始序列ISN， 不是从0开始的，而是通过一个算法来生成的，该算法会递增分配给后续的TCP链接的ISN（防止前后的多个连接中 序号重复混淆的情况发生）)
       * 流量控制: 防止一个快速的发送者压垮一个慢速的接收者: 如何实现: 接收TCP 需要为进入的数据维护一个缓冲区（每个TCP在建立连接时候，都会告知其缓冲区大小）当从发送TCP端收到数据时会将数据放入到缓冲区中。当应用层读取数据时会从缓冲区中删除数据， 在每个确认中，接收者会通知发送者 其缓冲区的可用空间，TCP流量控制算法 采用了 滑动窗口算法，来允许包含N个字节的窗口大小的 未确认段 同时在 发送者与接收者之间传递，接收端的缓冲区被充满，那么窗口就会关闭，发送端就会停止传输数据。
-      ![tcp_protocol](../images/tcp_protocol.png)
+      ![tcp_protocol](../assets/images/tcp_protocol.png)
 5. RFC（请求注解）: 是由 国际互联网学会赞助的RFC编辑组织发布的，描述互联网标准的RFC是由互联网工程任务组资助开发的， 互联网工程任务组 是一个由 网络设计师、操作员、厂商以及研究人员组成的社区，主要关注互联网的发展和平稳运行。
 
 ### 服务器设计
@@ -205,7 +205,7 @@ The linux programming interface
     ```
     示例代码中 read 简单的将文件内容 从内核缓冲区cache中拷贝到用户空间，write将用户空间缓冲区拷贝到内核空间中的socket缓冲区。 sendfile 被用来减少这种操作的低效性。文件内容会直接传送到套接字上，而不会经过用户空间， 这种技术成为 zero-copy transfer 零拷贝传输
     sendfile 函数调用的限制: out_fd 必须为套接字， in_fd 必须指向文件，能够进行mmap，这通常只能是一个普通文件。
-    ![zero_copy](../images/zero_copy.png)
+    ![zero_copy](../assets/images/zero_copy.png)
 5. TCP_CORK 套接字选项: 为了提高TCP使用效率（linux专有的选项），在web服务器传送页面时候，作为请求的响应，通常由两部分组成， HTTP 首部， 页面数据，单独的使用write操作 会传输2个TCP报文段，一个非常小的HTTP报文放在第一个分段中，这对网络是非常浪费的。这时候使用TCP_CORK 来避免其低效性。当在TCP 套接字上启用 TCP_CORK 选项时，之后所有的数据都会穿充到一个单独的TCP 报文段中，直到满足以下条件为止: 以达到报文段的大小上限、取消了 TCP_CORK 选项、套接字被关闭、或者启用 TCP_CORK后，从写入的第一个字节开始已经超过200ms（防止忘记取消 TCP_CORK 选项，超时时间可以保证传输）下面例子 介绍如何使用 TCP_CORK:
     ```c
     optval = 1
@@ -225,7 +225,7 @@ The linux programming interface
         3. 调用bind 时，将端口号 指定为0， 这种情况下 bind 会为套接字制定一个IP地址，并选择一个临时端口号
 7. 深入探讨TCP 协议
     1. TCP 报文格式
-        ![zero_copy](../images/tcp_segment.png)
+        ![zero_copy](../assets/images/tcp_segment.png)
         * Source port number（源端口号）: TCP 发送端的端口号
         * Destination port number(目的端口号): TCP 接收端的端口号
         * Sequence number(序列号): 报文的 序列号
@@ -248,18 +248,18 @@ The linux programming interface
         * Data （数据）: 包含了该报文中 传输的用户数据
     2.  TCP 序列号 和 确认机制
         每个通过TCP 连接传送的字节都由TCP 协议分配了一个逻辑序列号，双向数据流都有各自的序列号，当传送一个报文时，该报文的序列号被设为该传送方向上的 报文段数据域的第一个字姐的逻辑偏移。这样接收端 就可以按照正确的顺序对接收到的报文进行重组了。TCP 采用了主动确认，当一个报文段被成功接收后， 接收端会发送一个确认信息 即发送ACK 确认报文 给发送端，该报文的 确认序号字段被设置为 期望接受的下一个数据字节的逻辑序列号 （上一个成功收到的序列号 + 1 ）TCP 发送端发送报文时会启动一个定时器，如果在定时器超时时，仍未收到确认报文，那么就重传该报文 (注意 序列号并非常简单的递增 1，而是 按照 传送报文数据 大小来递增的 如下图)
-        ![tcp_ack](../images/tcp_ack.png)
+        ![tcp_ack](../assets/images/tcp_ack.png)
     3. TCP 连接的建立: API 层面: 服务器）调用listen 打开套接字，然后accept， 阻塞服务器进程 直到连接建立完成。客户端）调用connect 同服务器打开的套接字 建立连接
         1. 客户端 TCP节点 发送一个SYN 报文到服务器 TCP端，这个报文将告知 服务器有关客户端的TCP节点的初始序列号 （因为序列号不是从0 开始）
         2. 服务器 TCP端 发送确认 客户端 SYN报文的 ACK报文，并同时携带 SYN 的序列号。 即发送ACK，SYN 报文
         3. 客户端 TCP 节点发送一个ACK报文 来确认服务器端的TCP SYN 报文
-        ![tcp_three_hand_shake](../images/tcp_three_hand_shake.png)
+        ![tcp_three_hand_shake](../assets/images/tcp_three_hand_shake.png)
     4. TCP 连接的终止: 一端的应用程序执行close 调用 （主动关闭）， 之后 连接另一端的应用程序 也执行close调用（被动关闭）下面的报文顺序为假设 客户端 发起主动关闭
         1. 客户端执行主动关闭， 导致客户端TCP节点 发送一个FIN报文到服务器端
         2. 服务器端收到FIN 报文后，发送 ACK 报文进行响应。（之后服务器端任何对 套接字 read 操作 的尝试都会读取到 文件结尾）
         3. 稍后， 当服务器关闭 自己端的 连接时，服务器端 TCP 节点发送 FIN报文到客户端
         4. 客户端TCP 节点发送ACK报文作为响应
-        ![tcp_close](../images/tcp_close.png)
+        ![tcp_close](../assets/images/tcp_close.png)
         上面讨论的是 close 全双工的关闭(连接虽然是双向的，但是TCP节点的状态是唯一共享的)， 然而系统调用允许 shutdown 调用来关闭其中的一个通道，使TCP 成为 一个半双工。我们使用 shut_rdwr, SHUT_WR 来调用 shutdown 时候，TCP 连接将开始上面的关闭步骤。本地的 TCP节点 迁移到FIN_WAIT1 状态， 然后进入 FIN_WAIT2 状态，对端的进入到 CLOSE_WAIT 状态， 如果参数为 SHUT_WR 那么 套接字依然合法（合法的定义是？ 某种符合条件的状态？ FIN_WAIT1， FIN_WAIT2 正好处于 接受对端的ACK 报文， 而没有收到对方FIN 的状态，即 自己主动关闭成功，对方并未关闭），读端依然是打开的，因为对端的写入操作依然可以进行。这里 SHUT_RD 在TCP套接字上没有实际意义的原因是因为， 大多数TCP协议的实现都没有为 SHUT_RD 提供所期望的行为。导致该参数调用的shutdown 并不具有可移植性
     5. TIME_WAIT 状态: 执行主动关闭的TCP 端在该状态下， 等待 2MSL时间，然后迁移到closed 状态。 这样的设计目的有两点:（该状态应该只存在于 主动关闭的 TCP 节点上，主要原因在于， 主动关闭的节点 需要对上一条 别动关闭的节点 的FIN报文响应 ACK报文，并组织新的连接的创建 来 保证TCP 可靠性连接的建立）
         * 实现可靠的链接终止:等待2被的MSL， 这里的MSL 是TCP报文最大生存时间

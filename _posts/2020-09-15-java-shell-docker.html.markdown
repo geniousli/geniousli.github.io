@@ -1,7 +1,7 @@
 ---
 title: java shell docker
 date: 2020-09-15
-tags: week
+tags: java,shell,docker
 ---
 
 ## A Little Book on Java 的总结
@@ -499,13 +499,13 @@ docker build -t apache ./
 * 如果是登录 容器，则可以使用 nsenter 工具。使用方法如下：
 
 ```shell
-  PID=$(docker inspect --format {{.State.Pid}} 949baab68dd4)
+  PID=$(docker inspect --format \{\{.State.Pid}} 949baab68dd4)
   nsenter --target 16870 --mount --uts --ipc --net --pid
   nsenter --target 16870 --mount --uts --ipc --net --pid ls
 ```
 #### 对 Docker 容器的编排，或者是非常重要的一步. K8s
 
-### ? 实际中遇到的一些问题： 
+### ? 实际中遇到的一些问题：
 ##### ssh：  ssh 经常使用， ssh ip "command" 可以用来在远端 ip 上执行command， 但是 当command存在复杂的 command 比如 for 循环，则总是不能够正确执行， 比如 sh: 2: Syntax error: word unexpected (expecting "do")， 在进行了一番查找之后， https://stackoverflow.com/questions/26325685/execute-for-loop-over-ssh  发现自己忽略到了 在 command 中的 $ 会，会在 shell 传递给 $ip 机器 之前，就会展开， 这将导致  远端$ip 接收到的 command并非 我们传递给 ssh的command。两种解决办法：
 * 1. 将command 中所有的 $ 进行转义 \$
 * 2. 将 "command" 替换为 'command', 即展开 command中的所有内容 
