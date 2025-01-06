@@ -1,0 +1,29 @@
+---
+title: Linux Acl
+date: 2017-06-19
+tags: linux, relearn, ACL, shell
+---
+
+linux ACl 控制管理
+--------
+
+#### 常用命令
+  * /etc/passwd(用户相关), /etc/shadow(密码相关), /etc/group(分组相关), /etc/gshdow, UID(user id), GID(group id)
+  * root 密码忘记很麻烦，需要进入单人维护模式，passw修改密码
+  * groups, newgrp（切换有效群组， 当一个人拥有多个群组时候，可以切换群组）,
+  * useradd, passwd, usermod,
+
+  >
+  /etc/passwd中建立帐号相关数据，
+  /etc/shadow 中设定相关，但是没有密码
+  /etc/group中创建同名组名
+  /home 中创建家目录
+    在其中存在一些默认值的设定， /etc/default/useradd 中存在一些默认设定， 诸如 bash, skel家目录参考标准,  UID/GID &密码的设定， 在 /etc/login.defs
+  􏰀 /etc/default/useradd 􏰀
+   /etc/login.defs
+  􏰀 /etc/skel/*
+
+  * passwd, -l(lock user) -u(unlock user) -S(status) wildimagine, passwd 后面不加上， user时候，相当于修改自己密码，需要注意 root, 修改用户密码的使用
+  * usermod（修改user， -s, -L, -U）
+  * userdel， 除了修改 /etc/passwd, /etc/shadow, /etc/group, /etc/gshadow 密码登录相关之外，还有家目录， 会遗留该帐号相关的数据， 可以使用 find / -user username 找出来，处理之后，永久删除掉，该用户， 或者，设定用户无法使用(修改/etc/shadow)即可  * finger username， 显示自己的详细信息， 诸如登录系统等  * chsh -s /bin/bash, /etc/shells保存可用的shell，  * id username， 展示username相关的 UID/GID等信息,  * groupadd , groupmod, groudel  * gpasswd, 群组管理功能， 管理帐号加入、删除群组 -A （设为群管理员）, -M 加入群组， -r 移除密码，-R密码失效###  ACL (待完成)
+>>>>>>> 826e8645e9c7bcd7cca3f5319bac4ad95fb8ffc9

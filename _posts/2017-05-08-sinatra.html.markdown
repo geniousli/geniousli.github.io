@@ -1,0 +1,241 @@
+---
+title: Sinatra
+date: 2017-05-08
+tags: ruby, sinatra, rails
+---
+Sinatra
+----------
+
+> Sinatra 是ruby中最为简单的server框架，提供了一系列的dsl，来供构建server使用
+
+#### 目录结构概览
+  > 从目录结构看起， base.rb 中最为重要代码行数最多， 其中涵盖了所有的Sinatra重要代码， Response, Request, CommonLogger, NotFound, Helpers, Templates, Base
+
+#### 从调用逻辑看起
+
+  1. 调用代码
+
+      ```ruby
+        require 'sinatra'
+
+        get '/' do
+          'Hello world!1'
+        end
+
+        get '/car' do
+        end
+
+        get '/car/info/:id' do |id|
+          p '/car/info/:id ----'
+          body '/car/info'
+          status 200
+        end
+
+        get '/car/info' do
+          body '/car/info'
+          status 200
+        end
+
+        # main.rb
+        extend Sinatra::Delegator
+
+        call
+      ```
+
+  2. 代码调用栈
+
+      ```
+        |- extend Sinatra::Delegator
+          |- delegate [:get, :put ...] :register
+            |- Delegator.delegate(Application)
+              |- define_method :get do
+              |-  Application.send(get, *args, &block)
+                |- Application < Base
+                |- Base.get(path, opts, &block)
+                  |- route('GET', path, opts, &block)
+                    |- (@routes[verb] || []) << compile!('GET', path, block, options)
+
+
+        |- call
+          |- call!(env)
+            |- @request  = Request.new(env)
+            |- @response = Response.new
+            |- invoke { dispatch! }
+            |- invoke { error_block!(response.status) }
+              |- res = catch(:halt) { yield }
+              |- body res
+                |- route!("GET", '/car/info', options, &block)
+                  |- routes.each do |pattern, keys, conditions, block|
+                  |-  returned_pass_block = process_route(pattern, keys, conditions) do |*args|
+                  |-    env['sinatra.route'] = block.instance_variable_get(:@route_name)
+                  |-    route_eval { block[*args] }
+                  |-  end
+                    |- return unless match = pattern.match(route)
+                    |- block ? block[self, values] : yield(self, values)
+      ```
+
+      > 第一个步骤， 将 :get, :put 等方法， 委托给Application, Application 继承Base，拿get举例， get 的调用在@routes中添加 将proc 取消binding的 可执行proc(不知道为什么需要这样，详细见 generate_method, 而且method_name 还可以是 "{ver} ${path}"), Regrex 对象等
+
+      > 第二个执行， rack 中中间件调用call， 构建了response, Request.new(env), invoke 为一个接住halt异常，并且记录返回数据到response 的函数， dispatch!则更为重要， 在其中执行了route!, route！的目的为执行路由，寻找匹配的路由，然后执行其中的可执行proc， process_route, 使用存在routes中的正则匹配路径是否命中，命中则执行对应的proc，
+
+
+  3. 代码
+
+      ```ruby
+        module Delegator #:nodoc:
+          def self.delegate(*methods)
+
+            methods.each do |method_name|
+              define_method(method_name) do |*args, &block|
+                return super(*args, &block) if respond_to? method_name
+                Delegator.target.send(method_name, *args, &block)
+              end
+              private method_name
+            end
+          end
+
+          delegate :get, :patch, :put, :post, :delete, :head, :options, :link, :unlink,
+                   :template, :layout, :before, :after, :error, :not_found, :configure,
+                   :set, :mime_type, :enable, :disable, :use, :development?, :test?,
+                   :production?, :helpers, :settings, :register
+
+          class << self
+            attr_accessor :target
+          end
+
+          self.target = Application
+        end
+
+        class Application < Base; end
+
+        class Base
+          def get(path, opts = {}, &block)
+            conditions = @conditions.dup
+            route('GET', path, opts, &block)
+
+            @conditions = conditions
+            route('HEAD', path, opts, &block)
+          end
+
+          def route(verb, path, options = {}, &block)
+            # Because of self.options.host
+            signature = compile!(verb, path, block, options)
+            (@routes[verb] ||= []) << signature
+          end
+
+          def compile!(verb, path, block, options = {})
+            method_name             = "#{verb} #{path}"
+            unbound_method          = generate_method(method_name, &block)
+            pattern, keys           = compile path
+            conditions, @conditions = @conditions, []
+
+            wrapper                 = block.arity != 0 ?
+              proc { |a,p| unbound_method.bind(a).call(*p) } :
+              proc { |a,p| unbound_method.bind(a).call }
+            [ pattern, keys, conditions, wrapper ]
+          end
+
+          def generate_method(method_name, &block)
+            method_name = method_name.to_sym
+            define_method(method_name, &block)
+            method = instance_method method_name
+            remove_method method_name
+            method
+          end
+        end
+
+
+        def call!(env) # :nodoc:
+          @env      = env
+          @request  = Request.new(env)
+          @response = Response.new
+          @response['Content-Type'] = nil
+          invoke { dispatch! }
+          invoke { error_block!(response.status) } unless @env['sinatra.error']
+
+          unless @response['Content-Type']
+            if Array === body and body[0].respond_to? :content_type
+              content_type body[0].content_type
+            else
+              content_type :html
+            end
+          end
+
+          @response.finish
+        end
+
+        def invoke
+          res = catch(:halt) { yield }
+          res = [res] if Integer === res or String === res
+          body(res)
+        end
+
+
+        def dispatch!
+
+          invoke do
+            static! if settings.static? && (request.get? || request.head?)
+            filter! :before
+            route!
+          end
+        rescue ::Exception => boom
+          invoke { handle_exception!(boom) }
+        ensure
+          begin
+            filter! :after unless env['sinatra.static_file']
+          rescue ::Exception => boom
+            invoke { handle_exception!(boom) } unless @env['sinatra.error']
+          end
+        end
+
+        def route!(base = settings, pass_block = nil)
+          if routes = base.routes[@request.request_method]
+            routes.each do |pattern, keys, conditions, block|
+              returned_pass_block = process_route(pattern, keys, conditions) do |*args|
+                env['sinatra.route'] = block.instance_variable_get(:@route_name)
+                route_eval { block[*args] }
+              end
+              # don't wipe out pass_block in superclass
+              pass_block = returned_pass_block if returned_pass_block
+            end
+          end
+
+          # Run routes defined in superclass.
+          if base.superclass.respond_to?(:routes)
+            return route!(base.superclass, pass_block)
+          end
+
+          route_eval(&pass_block) if pass_block
+          route_missing
+        end
+
+        def process_route(pattern, keys, conditions, block = nil, values = [])
+          route = @request.path_info
+          route = '/' if route.empty? and not settings.empty_path_info?
+          return unless match = pattern.match(route)
+
+          values += match.captures.map! { |v| force_encoding URI_INSTANCE.unescape(v) if v }
+
+          if values.any?
+            original, @params = params, params.merge('splat' => [], 'captures' => values)
+            keys.zip(values) { |k,v| Array === @params[k] ? @params[k] << v : @params[k] = v if v }
+          end
+
+          catch(:pass) do
+            conditions.each { |c| throw :pass if c.bind(self).call == false }
+
+            block ? block[self, values] : yield(self, values)
+          end
+        ensure
+          @params = original if original
+        end
+      ```
+  4. 总结
+    1. DSL中通过将用户的block， 解除bind，执行bind来达到更换执行环境的问题，用这种方法实现的有 :get, :error 等, filter
+    2. sinatra提供的一下halt, pass 等，是采用throw :halt, 等来实现的， throw异常 然后中断正常处理，从而由sinatra接管
+    3. sinatra在路由匹配上每次都会将所有的现有的路由，首先通过verb(get, post, put) 等，过滤， 然后 循环匹配，
+    4. 关于渲染模板中如何将实例变量(@name='xx') 带入到模板中去， sinatra使用的为tilt， 在render的时候 将Sinatra::Application 实例传递进去， 使tilt在Application的实例变量中渲染模板(get 获得的代码块在Application实例中执行， 所以实例变量等都会副职在 其中， 而渲染模板的环境也在Application中，保证能够正常执行）
+    5. 这里在halt的实现方式上就有对比了， Rails vs Sinatra， rails中的callback实现的方式为每次检查Environment的变量， sinatra中为抛出异常， 传统认为抛出异常的代价是很高的。
+    6. sinatra中的invoke抽象的非常好， invoke是执行block然后将结果保存到body， status，response中
+    7. error 中的管理方法同路由中的一样，保存在类变量中， error => @error, :get, :put => @route,
+    8. 其中的Delegator的设定， 可以避免代码污染，污染全局空间，将委托方法放在一个module中

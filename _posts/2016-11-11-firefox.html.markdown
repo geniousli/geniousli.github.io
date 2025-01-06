@@ -1,0 +1,9 @@
+---
+title: Firefox
+date: 2016-11-11
+tags: Firefox
+---
+
+### 如何才能使用非签名的附加组件？（高级用户）
+
+Firefox ESR 45版，以及 开发者版 和 Nightly 版，将允许通过改变偏好来屏蔽增强的附加组件签名要求，请在 Firefox 配置编辑器（about:config 页）将 xpinstall.signatures.required 的值改为 false。还有其它一些山寨版的 Firefox 也允许此项屏蔽。更多内容，参阅 MozillaWiki 文章 附加组件/扩展签名。

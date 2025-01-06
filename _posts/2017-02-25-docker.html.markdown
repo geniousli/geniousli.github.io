@@ -1,0 +1,84 @@
+---
+title: Docker
+date: 2017-02-25
+tags: Docker
+---
+
+### 安装docker
+```
+阿里云的安装脚本
+curl -sSL http://acs-public-mirror.oss-cn-hangzhou.aliyuncs.com/docker-engine/internet | sh -
+使用脚本自动安装
+Docker 官方为了简化安装流程，提供了一套安装脚本，CentOS 系统上可以使用这套脚本安装：
+curl -sSL https://get.docker.com/ | sh
+
+DaoCloud 的安装脚本
+curl -sSL https://get.daocloud.io/docker | sh
+
+```
+### My Docker On Road Dev
+```
+mysql:
+  docker run --name dev_mysql -p 3306:3306 -v /sun/docker_data/mysql:/sun -e MYSQL_ROOT_PASSWORD=sun -d mysql:latest
+redis:
+  docker run -p 6379:6379 -v /sun/docker_data/redis:/sun -v /sun/docker_data/redis/redis.conf:/usr/local/etc/redis/redis.conf --name dev_redis -d redis:latest redis-server /sun/redis.conf
+rails5:
+  docker run -t -i -p 3000:3000 -v /sun/phantom/rails5:/sun/rails5 --name dev_rails5 -d rails:latest /bin/bash
+rails:
+  docker run -t -i -p 3000:3000 -v /sun:/sun --name dev_rails -d rails:latest /bin/bash
+```
+### 重新安装docker
+```
+$ sudo apt-get autoremove --purge docker-engine
+
+# Nothing worked until I added this step
+$ sudo rm -rfv /var/lib/docker
+
+# Reboot here
+
+$ sudo apt-get update
+$ sudo apt-get install docker-engine
+
+```
+### Docker导入和导出
+```
+Export命令用于持久化容器
+docker export <CONTAINER ID> > /home/export.tar
+Save命令用于持久化镜像
+docker save busybox-1 > /home/save.tar
+导入export.tar文件
+cat /home/export.tar | docker import - busybox-1-export:latest
+```
+### Docker开发
+```
+mysql:
+  docker run --name mysql -p 3306:3306 -v /sun/docker_data/mysql:/sun -e MYSQL_ROOT_PASSWORD=sun -d mysql:latest
+  docker run -d --name mysql -v /tmp/db:/var/lib/mysql -p 3309:3306 -e MYSQL_ROOT_PASSWORD=sun mysql
+postgres:
+  docker run --name postgres -p 5432:5432 -v /sun/docker_data/postgres:/sun -e POSTGRES_PASSWORD=sun -d postgres:latest
+redis:
+  docker run -p 6379:6379 -v /sun/docker_data/redis:/sun -v /sun/docker_data/redis/redis.conf:/usr/local/etc/redis/redis.conf --name redis -d redis:latest redis-server /sun/redis.conf
+rails5:
+  docker run -t -i -p 3000:3000 -v /sun/phantom/rails5:/sun/rails5 --name rails5 -d rails:latest /bin/bash
+rails:
+  docker run -t -i -p 3000:3000 -v /sun:/sun --name rails -d rails:latest /bin/bash
+golang:
+  docker run -t -i -p 8899:8899 -v /sun/go:/go --name golang -d golang:latest /bin/bash
+gogs:
+  docker run -t -i -p 10022:22 -p 10080:3000 -v /sun/phantom/gogs:/data --name=gogs gogs/gogs
+birt:
+  docker run -t -i --name birt -p 9000:8080 -v /sun/birt:/var/lib/tomcat7/webapps/birt/reports -d lavadiablo/docker-birt-host
+memcached:
+  docker run --name memcached -p 11211:11211 -d memcached:latest
+storm:
+  docker run -t -i -p 6666:6666 -v /sun/phantom/storm:/sun/storm --name storm -d storm:latest /bin/bash
+java:
+  docker run -t -i -p 8888:8888 -v /sun/phantom/storm:/sun/storm --name java -d java:latest /bin/bash
+jruby:
+  docker run -t -i -p 6666:6666 -v /sun/jruby:/sun/jruby --name jruby -d jruby:latest /bin/bash
+caravel:
+  docker run --name caravel -d -p 8088:8088 amancevice/caravel
+  docker exec -it caravel demo
+
+docker export <container id> > /sun/docker_data/docker_image/dev_golang_image_20161127.tar
+```

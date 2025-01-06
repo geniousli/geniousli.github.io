@@ -1,0 +1,92 @@
+---
+title: redis all
+date: 2021-09-13
+tags: redis, linux
+---
+
+## redis 总结： 
+
+> redis 已经看了不少，也写了不少，但是总是 没有一篇文章能够将其贯穿起来。 发现并没有太好的形式 将其总结下来。 曾经使用调用栈的方式将 代码+文档的形式记录下来。但缺少足够的大局观，写大片的理论文章又缺少足够的细节。
+
+### Redis Server 整体结构： 
+#### server.c 中的 main 函数 /Users/lishaohua/Documents/self_test/redis/src/server.c::6063
+##### initServerConfig() /Users/lishaohua/Documents/self_test/redis/src/server.c::2628  主要初始化 server的初始配置信息（并没有读取 config file）， 初始化 server 结构中的变量数值（比如， aof_state, 以及 初始化 command table (redis 命令表 其中包含  命令字符串 + 函数指针 )） 等
+##### 根据环境配置 调用 loadServerConfig 根据用户的config file 对server进行初始化
+##### initServer() 整个 server.c 中最重要的代码逻辑。其中包括 1） 创建server.el 的eventloop fd 2） 创建 socket_accept_handler(acceptTcpHandler) 并添加到 server.el.events 中  3） 创建 time event 添加到 server.el.timeEventHead 链表的头部
+##### InitServerLast() 创建 thread 分别进行 background IO 提交 以及 thread IO
+##### aeMain(server.el); server的主循环， 循环调用函数 aeProcessEvent， aeProcessEvents 函数内部， 主要 aeApiPoll(eventLoop, tvp) 等待 事件的发生，然后对事件进行处理（调用aeFileEvent 内部的 wfileProc/rfileProc） 然后 筛选 到时间的timerEvent 进行 调用（这里面 aeApiPoll中的 超时时间 tvp 是选取 timerEvents中最快到期的event的时间作为时间的， 所以可以满足timerEvent中的事件触发 不会太晚. 对于 timeEvent的处理， 则是简单的遍历 timeEvent list 判断是否应该发生（te->when < now） 发生则调用其 ->timeProc 函数，并标记删除）
+
+> 从上面内容可以看到，很显然 对于 新连接（client） 的到来的处理关键为: socket_accept_handler 的函数 acceptTcpHandler
+### acceptTcpHandler 函数内部：
+#### 将接受 server 的listen_fd 作为fd 调用 anetTcpAccept(fd)（其内部调用 系统的accept 并返回 client_fd）
+#### 调用 conn = connCreateAcceptedSocket(client_fd) 用以创建 Connect 结构，其内部 包含 ->fd = client_fd, ->type = &CT_Socket
+#### 调用 acceptCommonHandler(conn), 内部通过调用 createClient(conn)完成了 Client结构的额创建，以及 client_fd  上的事件绑定
+##### createClient:
+  *  创建了Client 结构 与 Connect 进行双向绑定。
+  *  设定 Conn 上的 read_handler 函数指针 为readQueryFromClient
+  *  调用 (aeCreateFileEvent(server.el,conn->fd, AE_READABLE,conn->type->ae_handler,conn) == AE_ERR) 完成 使用epoll对 client_fd 的事件监听
+
+> 所以 从上面的 调用来看， 我们了解了 一个 client 与 server 连接的建立过程。所以 client在后续的 执行 command过程 是下一个分析的重点， readQueryFromClient
+
+### readQueryFromClient:
+  * connRead(c->conn, c-querybuf, readlen); connRead  在 Client 对应的 client_fd 上进行read， 将内容复制到 querybuf 中
+  * processInputBuffer(c); 经过一系列的 函数调用 最终调用了 call函数 (processMultibulkBuffer -> processCommandAndResetClient() -> processCommand -> call )  call 通过 lookupCommand(c->argv[0]->ptr);  寻找对应的 redisCommadn 结构， 然后待用 c->cmd->proc(c） 来执行对应的 redis命令，并addReply
+
+
+### Redis 的数据结构：
+#### server 结构定义 在这里  /Users/lishaohua/Documents/self_test/redis/src/server.h::1155 其中除了 重要的 redisDB *db 指针之外， 其他的都为一些标记位。
+##### struct [redisDb](/Users/lishaohua/Documents/self_test/redis/src/server.h::705) 其中定义了 以下几个key：
+  * dict *dict，redis中的 所有key存在该 键值下 //set key val， HSET key field value , ZADD key score member , SADD key member  etc 其中的key 存放在dict  中
+  * dict *expires， 用于存在设定过期时间的key， 存储形式为 key => expired_at 
+  * dict *blocking_keys 当client发生阻塞调用（比如 blpop 等） 则 需要在该键值上面添加 key => List([c1, c2, c3...])  
+  * dict *ready_keys 表明 对于 该 key 上的 阻塞调用 已不再 需要阻塞 （搭配 blocking_keys 使用）  /Users/lishaohua/Documents/self_test/redis/src/blocked.c::713 (server.c 中存在同样名称的结构 server.ready_keys 为list) 
+  * dict *watched_keys 在 redis 中的 multi/exec 中的watch 使用
+  * int id， redis db id
+  * etc ..
+##### 其中大量的使用了 dict （字典 或者 HashMap） 作为 键值类型： 
+##### redis hash(dict ) 结构： 该结构相关 主要存在于 dict.c + dict.h 中
+* 结构如下： 
+
+```c
+typedef struct dictEntry {
+    void *key;
+    union {
+        void *val;
+        uint64_t u64;
+        int64_t s64;
+        double d;
+    } v;
+    struct dictEntry *next;
+} dictEntry;
+
+typedef struct dictType {
+    uint64_t (*hashFunction)(const void *key);
+    void *(*keyDup)(void *privdata, const void *key);
+    void *(*valDup)(void *privdata, const void *obj);
+    int (*keyCompare)(void *privdata, const void *key1, const void *key2);
+    void (*keyDestructor)(void *privdata, void *key);
+    void (*valDestructor)(void *privdata, void *obj);
+    int (*expandAllowed)(size_t moreMem, double usedRatio);
+} dictType;
+
+/* This is our hash table structure. Every dictionary has two of this as we
+ * implement incremental rehashing, for the old to the new table. */
+typedef struct dictht {
+    dictEntry **table;
+    unsigned long size;
+    unsigned long sizemask;
+    unsigned long used;
+} dictht;
+
+typedef struct dict {
+    dictType *type;
+    void *privdata;
+    dictht ht[2];
+    long rehashidx; /* rehashing not in progress if rehashidx == -1 */
+    int16_t pauserehash; /* If >0 rehashing is paused (<0 indicates coding error) */
+} dict;
+
+```
+
+* dict 
+

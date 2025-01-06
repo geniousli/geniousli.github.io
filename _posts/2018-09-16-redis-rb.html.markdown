@@ -1,0 +1,76 @@
+---
+title: redis-rb
+date: 2018-09-16
+tags: redis, ruby
+---
+
+redis-rb 为ruby 连接redis的客户端
+----------
+
+#### 项目结构
+1. 项目本身依赖于 hiredis，而hiredis 本身是一个redis client c的包装。并没有搞懂为什么需要依赖redis client
+2. 项目目录结构如下
+
+  ```text
+  /lib
+    |---- redis.rb
+    |---- /Redis
+          |---- connection.rb
+          |---- errors.rb
+          |---- pipeline.rb
+          |---- subscribe.rb
+          |---- cluster.rb
+          |---- hash_ring.rb
+          |---- distributed.rb
+  ```
+
+3. redis.set(key, value) 大概的调用栈如下
+
+  ```ruby
+    redis = Redis.new(host: "127.0.0.1", port: 6379, db: 15)
+    redis.set('counter', 'name')
+    p redis.get('counter')
+  ```
+
+  ```text
+  Redis.new
+    |--- @original_client = Client.new(options) # options config
+            |--- Redis::Client#initialize
+                    |--- Connector.new(options)
+
+  Redis#set
+    |--- synchronize { |client| client.call([:set, key, value.to_s]) }
+            |--- mon_synchronize { yield(@client) } # Moniter.mon_synchronize Enters exclusive section and executes the block
+                    |--- client.call([:set, key, value.to_s])
+                          |--- Redis::Client#call(command)
+                                    |--- reply = process([command]) { read }
+                                          |---
+                                          ensure_connected { commands.each { |command| write(command) } ; yield }                                           
+                                                    |--- write,         connection.write(command)
+                                              |--- connect; yield
+                                    |--- yield reply
+  ```
+
+  ```pipeline 的实现
+  Redis#pipelined
+    |---
+      synchronize do |client|
+        begin
+          original, @client = @client, Pipeline.new
+          yield(self)
+          original.call_pipeline(@client)
+        ensure
+          @client = original
+        end
+      end
+  ```
+
+  Pipeline 的 实现比较有意思， Pipeline.new一个对象，来代替@client， Pipeline必然实现了一个call接口（代替真实的client，来将commands收集起来）,yield 将现有的代码在Pipeline中调用了一遍。
+
+  > 其中， 1. client.call, client.process, ensure_connected 保证连接，write 为 connection.write(仅仅是socket.write command build 的方式要特殊一点，[item.bytesize + item].join("\r\n") ), 2. 其中使用了大量的block， yield， ruby 特性来实现 传递函数调用，看起来比较费劲，如果统一成 lambda 可能会更好一点, 3. Moniter 是新见的，用来处理多线程的协调问题。在Client 中@pid的 用处没有见到用处， 使用代码建立redis连接之后， fork执行代码并没有产生@pid不一致的问题。4. redis new时候如果存在db ！=0 的情况，调用call 之后，使用 write command来选中 配置的 db
+
+[TODO]
+  - [@pid] 的问题
+  - [Moniter]  的问题
+  - [EM] 依赖
+  - [eval] 依赖
