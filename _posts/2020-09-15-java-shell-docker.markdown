@@ -1,7 +1,7 @@
 ---
 title: java shell docker
 date: 2020-09-15
-tags: java,shell,docker
+tags: [java,shell,docker]
 ---
 
 ## A Little Book on Java 的总结

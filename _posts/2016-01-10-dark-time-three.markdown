@@ -1,7 +1,7 @@
 ---
 title: 暗时间 第三章
 date: 2016-01-10
-tags: book, mind, dark-time
+tags: [book, mind, dark-time]
 ---
 
 跟波利亚学解题

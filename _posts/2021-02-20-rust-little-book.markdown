@@ -1,7 +1,7 @@
 ---
 title: Rust little book
 date: 2021-02-20
-tags: rust, cargo, rustup
+tags: [rust, cargo, rustup]
 ---
 ## Rust little book
 

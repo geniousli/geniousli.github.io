@@ -1,6 +1,6 @@
 ---
 title: linux relearn2
-tags: linux
+tags: [linux]
 ---
 
 linux 重新复习

@@ -1,7 +1,7 @@
 ---
 title: 现代操作系统
 date: 2021-05-24
-tags: os, linux
+tags: [os, linux]
 ---
 
 ### 现代操作系统：

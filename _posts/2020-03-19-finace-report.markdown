@@ -1,7 +1,7 @@
 ---
 title: finace
 date: 2020-03-19
-tags: week
+tags: [week]
 ---
 
 ## 入门

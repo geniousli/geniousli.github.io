@@ -1,7 +1,7 @@
 ---
 title: rust synatx
 date: 2019-08-25
-tags: rust
+tags: [rust]
 ---
 
 ### Ownership Rules

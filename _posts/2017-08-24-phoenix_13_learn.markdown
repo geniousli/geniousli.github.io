@@ -1,7 +1,7 @@
 ---
 title: Phoenix 1.3
 date: 2017-08-24
-tags: elixir, phoenix
+tags: [elixir, phoenix]
 ---
 
 Phoenix 1.3 learn

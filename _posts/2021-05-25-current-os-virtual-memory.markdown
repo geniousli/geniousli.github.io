@@ -1,7 +1,7 @@
 ---
 title: 现代操作系统  内存篇
 date: 2021-05-25
-tags: os, linux
+tags: [os, linux]
 ---
 
 ## 内存管理

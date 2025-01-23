@@ -1,7 +1,7 @@
 ---
 title: Phoenix framework 1.3 context
 date: 2017-08-07
-tags: phoenix, elixir, desigin
+tags: [phoenix, elixir, desigin]
 ---
 
 Design

@@ -1,7 +1,7 @@
 ---
 title: Art of UNIX programming
 date: 2017-10-21
-tags: unix, linx, art
+tags: [unix, linx, art]
 ---
 
 The Art of unix programming

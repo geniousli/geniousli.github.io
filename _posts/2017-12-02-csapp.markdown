@@ -1,7 +1,7 @@
 ---
 title: CSAPP
 date: 2017-12-02
-tags: csapp
+tags: [csapp]
 ---
 
 计算机系统漫游

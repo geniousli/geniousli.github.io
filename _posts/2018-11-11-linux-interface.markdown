@@ -1,7 +1,7 @@
 ---
 title: linux-interface
 date: 2018-11-11
-tags: linux, books
+tags: [linux, books]
 ---
 The linux programming interface
 ----------

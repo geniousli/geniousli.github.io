@@ -1,7 +1,7 @@
 ---
 title: linux-interface-zombie-process
 date: 2019-06-25
-tags: linux,book
+tags: [linux,book]
 ---
 
 ### 僵尸进程

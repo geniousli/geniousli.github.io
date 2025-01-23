@@ -1,7 +1,7 @@
 ---
 title: Linux service
 date: 2017-06-22
-tags: linux, relearn, service
+tags: [linux, relearn, service]
 ---
 
 linux service

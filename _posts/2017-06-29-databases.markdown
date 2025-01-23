@@ -1,7 +1,7 @@
 ---
-title: 七周七数据库
+title: database
 date: 2017-06-29
-tags: mysql, riak, redis, hbase
+tags: [mysql, riak, redis, hbase]
 ---
 七周七数据库
 --------

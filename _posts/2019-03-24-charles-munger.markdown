@@ -1,7 +1,7 @@
 ---
 title: charles-munger
 date: 2019-03-24
-tags: books
+tags: [books]
 pin: true
 ---
 

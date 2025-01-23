@@ -1,7 +1,7 @@
 ---
 title: 暗时间 第二章
 date: 2015-12-24
-tags: book, mind, dark-time
+tags: [book, mind, dark-time]
 ---
 思维改变生活
 ------------------------

@@ -1,7 +1,7 @@
 ---
 title: Sinatra
 date: 2017-05-08
-tags: ruby, sinatra, rails
+tags: [ruby, sinatra, rails]
 ---
 Sinatra
 ----------

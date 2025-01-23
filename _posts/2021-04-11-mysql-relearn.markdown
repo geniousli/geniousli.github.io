@@ -1,7 +1,7 @@
 ---
 title: Mysql
 date: 2021-04-11
-tags: mysql
+tags: [mysql]
 ---
 
 ## Mysql Relearn

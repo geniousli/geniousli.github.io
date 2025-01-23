@@ -1,7 +1,7 @@
 ---
 title: shuidichou
 date: 2019-05-11
-tags: books
+tags: [books]
 ---
 
 Charles munger ---- 查理芒格

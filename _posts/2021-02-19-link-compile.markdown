@@ -1,7 +1,7 @@
 ---
 title: link compile
 date: 2021-02-19
-tags: linker compile gcc
+tags: [linker, compile, gcc]
 ---
 
 ## link & compile

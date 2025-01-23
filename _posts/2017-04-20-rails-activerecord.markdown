@@ -1,7 +1,7 @@
 ---
 title: Rails ActivRecord源码（未完成）
 date: 2017-04-20
-tags: rails, sourcecode
+tags: [rails, sourcecode]
 ---
 
 rails activerecord 源码

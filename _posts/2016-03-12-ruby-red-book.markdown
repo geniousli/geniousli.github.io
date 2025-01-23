@@ -1,7 +1,7 @@
 ---
 title: Ruby 面向对象语言描述
 date: 2016-03-12
-tags: ruby
+tags: [ruby]
 ---
 
 面向对象设计实践指南Ruby语言描述

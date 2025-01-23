@@ -1,7 +1,7 @@
 ---
 title: redis all
 date: 2021-09-13
-tags: redis, linux
+tags: [redis, linux]
 ---
 
 ## redis 总结： 

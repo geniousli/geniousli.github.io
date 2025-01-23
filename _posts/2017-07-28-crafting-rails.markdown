@@ -1,7 +1,7 @@
 ---
 title: Crafting rails
 date: 2017-07-28
-tags: rails, ruby
+tags: [rails, ruby]
 ---
 
 Crafting rails application

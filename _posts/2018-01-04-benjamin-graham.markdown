@@ -1,7 +1,8 @@
 ---
 title: benjamin graham
 date: 2018-01-04
-tags: finaice
+tags: [finance]
+pin: true
 ---
 
 格雷厄姆之道（如何在中国实践价值投资）

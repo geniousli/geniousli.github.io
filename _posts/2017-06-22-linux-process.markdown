@@ -1,7 +1,7 @@
 ---
 title: Linux process
 date: 2017-06-22
-tags: linux, relearn, process
+tags: [linux, relearn, process]
 ---
 
 linux process

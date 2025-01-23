@@ -1,7 +1,7 @@
 ---
 title: rails-time-zone
 date: 2019-05-21
-tags: pratice
+tags: [pratice]
 ---
 
 # Rails Timezone

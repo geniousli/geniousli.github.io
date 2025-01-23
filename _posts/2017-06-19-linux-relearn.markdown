@@ -1,7 +1,7 @@
 ---
 title: Linux Relearn
 date: 2017-06-19
-tags: linux, relearn, bash, shell
+tags: [linux, relearn, bash, shell]
 ---
 
 linux bash

@@ -1,7 +1,7 @@
 ---
 title: 如何变得有思想
 date: 2016-01-10
-tags: book, mind, poem
+tags: [book, mind, poem]
 ---
 
 如何变得有思想

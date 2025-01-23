@@ -1,7 +1,7 @@
 ---
 title: redis-rb
 date: 2018-09-16
-tags: redis, ruby
+tags: [redis, ruby]
 ---
 
 redis-rb 为ruby 连接redis的客户端

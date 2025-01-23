@@ -1,7 +1,7 @@
 ---
 title: Linux crontab
 date: 2017-06-22
-tags: linux, relearn, crontab
+tags: [linux, relearn, crontab]
 ---
 
 linux crontab （例行性工作排程）

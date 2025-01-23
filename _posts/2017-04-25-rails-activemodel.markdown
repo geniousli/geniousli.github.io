@@ -1,7 +1,7 @@
 ---
 title: Rails ActiveModel
 date: 2017-04-25
-tags: rails, activemodel, ruby
+tags: [rails, activemodel, ruby]
 ---
 
 [AttributeAssignment](#attribute_assignment)

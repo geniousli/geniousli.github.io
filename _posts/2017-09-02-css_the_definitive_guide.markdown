@@ -1,7 +1,7 @@
 ---
 title: Css The Definitive Guide
 date: 2017-09-02
-tags: html, css
+tags: [html, css]
 ---
 
 The Definitive Guide css

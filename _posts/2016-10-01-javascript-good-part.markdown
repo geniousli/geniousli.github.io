@@ -1,7 +1,7 @@
 ---
 title: Javascript 语言精粹
 date: 2016-10-01
-tags: javascript
+tags: [javascript]
 ---
 
 ### javascrip 语言精粹

@@ -1,7 +1,7 @@
 ---
 title: 暗时间 第一章
 date: 2015-12-20
-tags: book, mind, dark-time
+tags: [book, mind, dark-time]
 ---
 暗时间
 -------------------

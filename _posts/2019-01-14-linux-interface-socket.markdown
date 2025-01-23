@@ -1,7 +1,7 @@
 ---
 title: linux-interface-socket
 date: 2019-01-14
-tags: linux, books
+tags: [linux, books]
 ---
 The linux programming interface
 ----------

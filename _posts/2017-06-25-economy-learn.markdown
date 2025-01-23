@@ -1,7 +1,7 @@
 ---
 title: Principles of economics
 date: 2017-06-25
-tags: economy
+tags: [economy]
 ---
 经济学原理(微观经济学)
 --------

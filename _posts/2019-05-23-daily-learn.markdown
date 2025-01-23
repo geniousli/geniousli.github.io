@@ -1,7 +1,7 @@
 ---
 title: daily-learn
 date: 2019-05-23
-tags: pratice
+tags: [pratice]
 ---
 
 mysql_conn doam_217_realm1 -e "show tables" > ~/tables.txt

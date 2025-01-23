@@ -1,7 +1,7 @@
 ---
 title: linux swap
 date: 2016-09-07
-tags: linux
+tags: [linux]
 ---
 
 ### Ubuntu增加虚拟内存

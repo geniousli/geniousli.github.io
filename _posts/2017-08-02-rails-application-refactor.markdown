@@ -1,7 +1,7 @@
 ---
 title: Rails Application Refactor
 date: 2017-08-02
-tags: rails, ruby, refactor
+tags: [rails, ruby, refactor]
 ---
 
 重构现有Rails应用

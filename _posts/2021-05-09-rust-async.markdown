@@ -1,7 +1,7 @@
 ---
 title: Rust Async
 date: 2021-05-09
-tags: rust, async, cocurrent
+tags: [rust, async, cocurrent]
 ---
 
 ### 并发模型

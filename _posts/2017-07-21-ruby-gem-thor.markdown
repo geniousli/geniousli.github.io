@@ -1,7 +1,7 @@
 ---
 title: Thor option parse 的代替者
 date: 2017-07-21
-tags: ruby, gem
+tags: [ruby, gem]
 ---
  thor
 --------

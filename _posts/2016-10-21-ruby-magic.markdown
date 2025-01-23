@@ -1,7 +1,7 @@
 ---
 title: Ruby
 date: 2016-10-21
-tags: Ruby
+tags: [Ruby]
 ---
 
 ### 排列组合

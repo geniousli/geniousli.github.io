@@ -1,7 +1,7 @@
 ---
 title: docker 入门
 date: 2017-04-25
-tags: docker
+tags: [docker]
 ---
 
 #### docker

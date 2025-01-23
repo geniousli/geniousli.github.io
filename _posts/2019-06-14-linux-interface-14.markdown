@@ -1,7 +1,7 @@
 ---
 title: linux-interface-14
 date: 2019-06-14
-tags: linux,book
+tags: [linux,book]
 ---
 
 文件系统

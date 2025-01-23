@@ -1,7 +1,7 @@
 ---
 title: linux tar command
 date: 2016-09-07
-tags: linux, command
+tags: [linux, command]
 ---
 
 # zip

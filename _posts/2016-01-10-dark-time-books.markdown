@@ -1,7 +1,7 @@
 ---
 title: 暗时间-推荐书目
 date: 2016-01-10
-tags: book, mind, dark-time
+tags: [book, mind, dark-time]
 ---
 
 暗时间中作者提到或者参考的数目

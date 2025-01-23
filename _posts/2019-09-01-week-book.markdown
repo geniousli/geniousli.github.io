@@ -1,7 +1,7 @@
 ---
 title: week book
 date: 2019-09-01
-tags: week
+tags: [week]
 ---
 
 ### Week book

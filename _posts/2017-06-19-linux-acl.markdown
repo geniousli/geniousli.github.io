@@ -1,7 +1,7 @@
 ---
 title: Linux Acl
 date: 2017-06-19
-tags: linux, relearn, ACL, shell
+tags: [linux, relearn, ACL, shell]
 ---
 
 linux ACl 控制管理

@@ -1,7 +1,7 @@
 ---
 title: linux-progress-group
 date: 2019-02-23
-tags: linux, books
+tags: [linux, books]
 ---
 The linux programming interface
 ----------

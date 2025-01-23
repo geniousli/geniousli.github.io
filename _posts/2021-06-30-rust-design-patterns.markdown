@@ -1,7 +1,7 @@
 ---
 title: rust 编码模式
 date: 2021-06-30
-tags: rust, design
+tags: [rust, design]
 ---
 
 ### 设计模式

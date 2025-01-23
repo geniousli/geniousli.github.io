@@ -1,7 +1,7 @@
 ---
 title: linux维护
 date: 2017-04-19
-tags: linux
+tags: [linux]
 ---
 ### 二台机器之间同步大文件(拷贝文件到另一台机器)
 rsync -rP --rsh=ssh /file/path name@ip:/file/path
